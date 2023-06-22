@@ -33,8 +33,11 @@ class AirShip(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
 
 airship = AirShip(50, 250, 'airship_texture.png')
+airship_y = 0
+direction = 0
 gravitation = 0
 number_gravitation = 1
+rotate = 1
 
 clock = pygame.time.Clock()
 FPS = 30
@@ -47,8 +50,19 @@ while 1:
     speed_fall()
     touch()
 
+    if gravitation < 3 and direction >= 10:
+        airship_y = airship.rect.y
+        airship.image = pygame.transform.rotate(airship.image, 365)
+        airship.rect = airship.image.get_rect(center=(50, airship_y))
+        direction -= 5
+    if gravitation > 3 and direction <= 10:
+        airship_y = airship.rect.y
+        airship.image = pygame.transform.rotate(airship.image, 5)
+        airship.rect = airship.image.get_rect(center=(50, airship_y))
+        direction += 5
 
     sc.fill((0, 0, 0))
+
 
     sc.blit(airship.image, airship.rect)
     clock.tick(FPS)
