@@ -54,18 +54,20 @@ class ObstrucTion(pygame.sprite.Sprite):
 
 airship = AirShip(50, 250, 'airship_texture.png')
 airship_mask = pygame.mask.from_surface(airship.image)
-lina = pygame.draw.line(sc, (255, 255, 255), (50, 300), (100, 400))
 airship_y = 0
 direction = 0
 gravitation = 0
 number_gravitation = 1
 rotate = 1
+point_blocks = 0
 
 obstruction = ObstrucTion(800, 450, 'obstruction_texture.png')
 obstruction_mask = pygame.mask.from_surface(obstruction.image)
 
 clock = pygame.time.Clock()
 FPS = 30
+
+r = random.randint(1, 100)
 
 while 1:
     for event in pygame.event.get():
@@ -84,12 +86,23 @@ while 1:
     sc.blit(obstruction.image, obstruction.rect)
     pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
     clock.tick(FPS)
-    sc.blit(lina.)
     pygame.display.update()
-    obstruction.rect.x -= 13
+    obstruction.rect.x -= 30
     if obstruction.rect.right < 0:
         obstruction.rect.x = 800
-        obstruction.rect.bottom = 500
+        r = random.randint(0, 100)
+        if r > 70 and point_blocks < 1:
+            obstruction.rect.y -= 100
+            point_blocks += 1
+            print(r)
+        if r < 31 and point_blocks > 0:
+            obstruction.rect.y += 100
+            point_blocks -= 1
+            print(r)
+        if 30 < r < 70:
+            # тут ничего не делается, просто для понятия создал это условие
+            print(r)
+
     offset = (obstruction.rect.x - airship.rect.x, obstruction.rect.y - airship.rect.y)
     if airship_mask.overlap_area(obstruction_mask, offset) > 0:
         print('пересечение')
