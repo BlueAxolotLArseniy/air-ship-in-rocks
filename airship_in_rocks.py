@@ -54,6 +54,7 @@ class ObstrucTion(pygame.sprite.Sprite):
 
 airship = AirShip(50, 250, 'airship_texture.png')
 airship_mask = pygame.mask.from_surface(airship.image)
+lina = pygame.draw.line(sc, (255, 255, 255), (50, 300), (100, 400))
 airship_y = 0
 direction = 0
 gravitation = 0
@@ -83,6 +84,7 @@ while 1:
     sc.blit(obstruction.image, obstruction.rect)
     pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
     clock.tick(FPS)
+    sc.blit(lina.)
     pygame.display.update()
     obstruction.rect.x -= 13
     if obstruction.rect.right < 0:
