@@ -4,6 +4,31 @@ pygame.init()
 
 sc = pygame.display.set_mode((800, 500))
 
+def blit_list():
+    for i in obstructions_list:
+        sc.blit(i[0].image, i[0].rect)
+
+def move_obstructions_in_list():
+    for i in obstructions_list:
+        i[0].rect.x -= MOVE_OBSTRUCTIONS
+
+def generation_landscape_in_blocks(i):
+    global point_blocks
+    if i.rect.right < 0:
+        i.rect.x = 800
+        r = random.randint(1, 3)
+        if r > 2 and point_blocks < 1:
+            i.rect.y -= 100
+            point_blocks += 1
+            print(r)
+        elif r < 2 and point_blocks > 0:
+            i.rect.y += 100
+            point_blocks -= 1
+            print(r)
+        elif 1 < r < 3:
+            # тут ничего не делается, просто для понятия создал это условие
+            print(r)
+
 def speed_fall():
     global gravitation, number_gravitation
     gravitation -= 1
@@ -60,6 +85,10 @@ gravitation = 0
 number_gravitation = 1
 rotate = 1
 point_blocks = 0
+MOVE_OBSTRUCTIONS = 30
+
+obstructions_list = [[ObstrucTion(600, 450, 'obstruction_texture.png')]]
+obstructions_list = [[ObstrucTion(600, 450, 'obstruction_texture.png'), pygame.mask.from_surface(obstructions_list[0][0].image)]]
 
 obstruction = ObstrucTion(800, 450, 'obstruction_texture.png')
 obstruction_mask = pygame.mask.from_surface(obstruction.image)
@@ -67,7 +96,7 @@ obstruction_mask = pygame.mask.from_surface(obstruction.image)
 clock = pygame.time.Clock()
 FPS = 30
 
-r = random.randint(1, 100)
+r = random.randint(1, 3)
 
 while 1:
     for event in pygame.event.get():
@@ -86,23 +115,26 @@ while 1:
     sc.blit(obstruction.image, obstruction.rect)
     pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
     clock.tick(FPS)
-    pygame.display.update()
-    obstruction.rect.x -= 30
+    obstruction.rect.x -= MOVE_OBSTRUCTIONS
+    move_obstructions_in_list()
+    blit_list()
     if obstruction.rect.right < 0:
         obstruction.rect.x = 800
-        r = random.randint(0, 100)
-        if r > 70 and point_blocks < 1:
+        r = random.randint(1, 3)
+        if r > 2 and point_blocks < 1:
             obstruction.rect.y -= 100
             point_blocks += 1
             print(r)
-        if r < 31 and point_blocks > 0:
+        elif r < 2 and point_blocks > 0:
             obstruction.rect.y += 100
             point_blocks -= 1
             print(r)
-        if 30 < r < 70:
+        elif 1 < r < 3:
             # тут ничего не делается, просто для понятия создал это условие
             print(r)
+    generation_landscape_in_blocks(obstructions_list[0][0])
 
     offset = (obstruction.rect.x - airship.rect.x, obstruction.rect.y - airship.rect.y)
     if airship_mask.overlap_area(obstruction_mask, offset) > 0:
         print('пересечение')
+    pygame.display.update()
