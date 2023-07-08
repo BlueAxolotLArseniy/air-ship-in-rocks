@@ -6,14 +6,14 @@ sc = pygame.display.set_mode((800, 500))
 
 def blit_list():
     for i in obstructions_list:
-        sc.blit(i[0].image, i[0].rect)
+        sc.blit(i.image, i.rect)
 
 def move_obstructions_in_list():
     for i in obstructions_list:
-        i[0].rect.x -= MOVE_OBSTRUCTIONS
+        i.rect.x -= MOVE_OBSTRUCTIONS
 
 def generation_landscape_in_blocks(i):
-    global point_blocks
+    global point_blocks, r
     if i.rect.right < 0:
         i.rect.x = 800
         r = random.randint(1, 3)
@@ -28,6 +28,18 @@ def generation_landscape_in_blocks(i):
         elif 1 < r < 3:
             # тут ничего не делается, просто для понятия создал это условие
             print(r)
+        if point_blocks == 0:
+            i.rect.bottom = 500
+        elif point_blocks == 1:
+            i.rect.bottom = 400
+        elif point_blocks == 2:
+            i.rect.bottom = 300
+        elif point_blocks == 3:
+            i.rect.bottom = 200
+        elif point_blocks == 4:
+            i.rect.bottom = 100
+
+
 
 def speed_fall():
     global gravitation, number_gravitation
@@ -87,11 +99,12 @@ rotate = 1
 point_blocks = 0
 MOVE_OBSTRUCTIONS = 30
 
-obstructions_list = [[ObstrucTion(600, 450, 'obstruction_texture.png')]]
-obstructions_list = [[ObstrucTion(600, 450, 'obstruction_texture.png'), pygame.mask.from_surface(obstructions_list[0][0].image)]]
-
-obstruction = ObstrucTion(800, 450, 'obstruction_texture.png')
-obstruction_mask = pygame.mask.from_surface(obstruction.image)
+obstructions_list = []
+obstructions_list_masks = []
+obstructions_list.append(ObstrucTion(900, 450, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[0].image))
+obstructions_list.append(ObstrucTion(830, 450, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[1].image))
 
 clock = pygame.time.Clock()
 FPS = 30
@@ -109,32 +122,17 @@ while 1:
     smoothness_rotate()
 
 
-    sc.fill((0, 0, 0))
+    sc.fill((99, 24, 16))
 
     sc.blit(airship.image, airship.rect)
-    sc.blit(obstruction.image, obstruction.rect)
     pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
     clock.tick(FPS)
-    obstruction.rect.x -= MOVE_OBSTRUCTIONS
     move_obstructions_in_list()
     blit_list()
-    if obstruction.rect.right < 0:
-        obstruction.rect.x = 800
-        r = random.randint(1, 3)
-        if r > 2 and point_blocks < 1:
-            obstruction.rect.y -= 100
-            point_blocks += 1
-            print(r)
-        elif r < 2 and point_blocks > 0:
-            obstruction.rect.y += 100
-            point_blocks -= 1
-            print(r)
-        elif 1 < r < 3:
-            # тут ничего не делается, просто для понятия создал это условие
-            print(r)
-    generation_landscape_in_blocks(obstructions_list[0][0])
+    for i in obstructions_list:
+        generation_landscape_in_blocks(i)
 
-    offset = (obstruction.rect.x - airship.rect.x, obstruction.rect.y - airship.rect.y)
-    if airship_mask.overlap_area(obstruction_mask, offset) > 0:
-        print('пересечение')
+    # offset = (obstruction.rect.x - airship.rect.x, obstruction.rect.y - airship.rect.y)
+    # if airship_mask.overlap_area(obstruction_mask, offset) > 0:
+    #     print('пересечение')
     pygame.display.update()
