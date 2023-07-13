@@ -13,7 +13,7 @@ def move_obstructions_in_list():
         i.rect.x -= MOVE_OBSTRUCTIONS
 
 def generation_landscape_in_blocks(i):
-    global point_blocks, r
+    global point_blocks, r, stabilization
     if i.rect.right < 0:
         i.rect.x = 800
         r = random.randint(1, 3)
@@ -29,15 +29,15 @@ def generation_landscape_in_blocks(i):
             # тут ничего не делается, просто для понятия создал это условие
             print(r)
         if point_blocks == 0:
-            i.rect.bottom = 500
+            i.rect.bottom = 650
         elif point_blocks == 1:
-            i.rect.bottom = 400
+            i.rect.bottom = 550
         elif point_blocks == 2:
-            i.rect.bottom = 300
+            i.rect.bottom = 450
         elif point_blocks == 3:
-            i.rect.bottom = 200
+            i.rect.bottom = 350
         elif point_blocks == 4:
-            i.rect.bottom = 100
+            i.rect.bottom = 250
 
 
 
@@ -76,7 +76,7 @@ def touch():
 class AirShip(pygame.sprite.Sprite):
     def __init__(self, x, y, filename):
         self.image = pygame.image.load(filename).convert()
-        self.image.set_colorkey((0, 0, 0))
+        self.image.set_colorkey((255, 255, 255))
         self.image = pygame.transform.scale(self.image, (self.image.get_width()*5, self.image.get_height()*5))
         self.rect = self.image.get_rect(center=(x, y))
         self.original_image = self.image
@@ -85,11 +85,11 @@ class AirShip(pygame.sprite.Sprite):
 class ObstrucTion(pygame.sprite.Sprite):
     def __init__(self, x, y, filename):
         self.image = pygame.image.load(filename).convert()
-        self.image.set_colorkey((0, 0, 0))
+        self.image.set_colorkey((255, 255, 255))
         self.image = pygame.transform.scale(self.image, (self.image.get_width()*5, self.image.get_height()*5))
         self.rect = self.image.get_rect(center=(x, y))
 
-airship = AirShip(50, 250, 'airship_texture.png')
+airship = AirShip(50, 100, 'airship_texture.png')
 airship_mask = pygame.mask.from_surface(airship.image)
 airship_y = 0
 direction = 0
@@ -101,10 +101,33 @@ MOVE_OBSTRUCTIONS = 30
 
 obstructions_list = []
 obstructions_list_masks = []
-obstructions_list.append(ObstrucTion(900, 450, 'obstruction_texture.png'))
+obstructions_list.append(ObstrucTion(900, 400, 'obstruction_texture.png'))
 obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[0].image))
-obstructions_list.append(ObstrucTion(830, 450, 'obstruction_texture.png'))
+obstructions_list.append(ObstrucTion(830, 400, 'obstruction_texture.png'))
 obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[1].image))
+obstructions_list.append(ObstrucTion(760, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[2].image))
+obstructions_list.append(ObstrucTion(690, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[3].image))
+obstructions_list.append(ObstrucTion(620, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[4].image))
+obstructions_list.append(ObstrucTion(550, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[5].image))
+obstructions_list.append(ObstrucTion(480, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[6].image))
+obstructions_list.append(ObstrucTion(410, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[7].image))
+obstructions_list.append(ObstrucTion(340, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[8].image))
+obstructions_list.append(ObstrucTion(270, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[9].image))
+obstructions_list.append(ObstrucTion(100, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[10].image))
+obstructions_list.append(ObstrucTion(30, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[11].image))
+obstructions_list.append(ObstrucTion(-40, 400, 'obstruction_texture.png'))
+obstructions_list_masks.append(pygame.mask.from_surface(obstructions_list[12].image))
+
 
 clock = pygame.time.Clock()
 FPS = 30
@@ -136,3 +159,4 @@ while 1:
     # if airship_mask.overlap_area(obstruction_mask, offset) > 0:
     #     print('пересечение')
     pygame.display.update()
+    print(obstructions_list[0].rect.y)
