@@ -1,11 +1,13 @@
+import sys
 import pygame
 import random
 pygame.init()
 
 sc = pygame.display.set_mode((800, 500), pygame.RESIZABLE)
 
-ComplexitY = 50
+ComplexitY = 80
 
+pause = True
 
 def random_holst(hol, y, draw):
     global ComplexitY
@@ -96,7 +98,7 @@ class Buttons_in_menu(pygame.sprite.Sprite):
         self.original_image = self.image
         self.original_rect = self.rect.copy()
 
-airship = AirShip(50, 100, 'airship_texture.png')
+airship = AirShip(50, 200, 'airship_texture.png')
 airship_mask = pygame.mask.from_surface(airship.image)
 airship_y = 0
 direction = 0
@@ -104,17 +106,7 @@ gravitation = 0
 number_gravitation = 1
 rotate = 1
 MOVE_OBSTRUCTIONS = 30
-
-f1 = pygame.font.Font(None, 36)
-text_title = f1.render('AIRSHIP_IN_IN_ROCKS', True, (255, 255, 255))
-text_play = f1.render('PLAY', True, (255, 255, 255))
-
-
-button_play = Buttons_in_menu(400, 150, 'Button.png')
-obstruction = ObstrucTion(800*3/2, 250, 'obstruction_texture56.png')
-obstruction_mask = pygame.mask.from_surface(obstruction.image)
-obstruction2 = ObstrucTion(800*3/2+2400, 250, 'obstruction_texture56.png')
-obstruction_mask2 = pygame.mask.from_surface(obstruction2.image)
+point = 0
 
 holst = pygame.Surface((800, 500), pygame.SRCALPHA, 32) # Прозрачность фона
 game_holst = pygame.Surface((800, 500), pygame.SRCALPHA, 32) # Прозрачность фона
@@ -155,58 +147,67 @@ def reset_holst(hol):
         random_holst(holst, 380, 'down')
         random_holst(holst, 100, 'up')
 
+f1 = pygame.font.Font(None, 36)
+text1 = f1.render('e = exit   p = play   esc = menu', True,
+                  (255, 255, 0))
+text2 = f1.render('AIRSHIP IN ROCKS', True,
+                  (255, 255, 255))
+
+whilee = False
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            quit()
+            whilee = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                pause = False
+            elif event.key == pygame.K_ESCAPE:
+                pause = True
+            elif event.key == pygame.K_e:
+                whilee = True
     sc.fill((30, 30, 30))
+    if pause == True:
+        sc.blit(text1, (230, 250))
+        sc.blit(text2, (300, 100))
+        pygame.display.update()
+    if whilee == True: break
+    if pause == False:
+        point += 1
+        speed_fall()
+        touch()
 
-    # if menu == False:
-    speed_fall()
-    touch()
+        if point % 12 == 0:
+            ComplexitY += 1
 
-    smoothness_rotate()
+        smoothness_rotate()
 
-    if game_holst_rect.x <= -800:
-        reset_holst('gameholst')
-        game_holst_rect.x = 800
-    if holst_rect.x <= -800:
-        reset_holst('holst')
-        holst_rect.x = 800
+        if game_holst_rect.x <= -800:
+            reset_holst('gameholst')
+            game_holst_rect.x = 800
+        if holst_rect.x <= -800:
+            reset_holst('holst')
+            holst_rect.x = 800
 
-    holst_rect.x -= 10
-    sc.blit(holst, (holst_rect.x, holst_rect.y))
-    game_holst_rect.x -= 10
-    sc.blit(game_holst, (game_holst_rect.x, game_holst_rect.y))
+        holst_rect.x -= 20
+        sc.blit(holst, (holst_rect.x, holst_rect.y))
+        game_holst_rect.x -= 20
+        sc.blit(game_holst, (game_holst_rect.x, game_holst_rect.y))
 
-    # if obstruction.rect.right < 10:
-    #     obstruction.rect.left = obstruction2.rect.right
-    #     if random.randint(1, 2) == 2:
-    #         obstruction.cheange_image("obstruction_texture57.png")
-    #     else:
-    #         obstruction.cheange_image("obstruction_texture56.png")
-    # if obstruction2.rect.right < 10:
-    #     obstruction2.rect.left = obstruction.rect.right
-    #     if random.randint(1, 2) == 2:
-    #         obstruction2.cheange_image("obstruction_texture57.png")
-    #     else:
-    #         obstruction2.cheange_image("obstruction_texture56.png")
+        sc.blit(airship.image, airship.rect)
+        pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
+        clock.tick(FPS)
 
+        if point > 150:
+            offset = (int(airship.rect.x - holst_rect.x), int(airship.rect.y - holst_rect.y))
+            if mask1.overlap_area(airship_mask, offset):
+                print('пересечение')
+                break
+            offset = (int(airship.rect.x - game_holst_rect.x), int(airship.rect.y - game_holst_rect.y))
+            if game_mask.overlap_area(airship_mask, offset):
+                print('пересечение')
+                break
+        if whilee == True: break
+        pygame.display.update()
 
-
-    # sc.blit(obstruction.image, obstruction.rect)
-    # sc.blit(obstruction2.image, obstruction2.rect)
-    # obstruction.rect.x -= 20
-    # obstruction2.rect.x -= 20
-    sc.blit(airship.image, airship.rect)
-    pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
-    clock.tick(FPS)
-    # if airship_mask.overlap_area(obstruction_mask, (obstruction.rect.x - airship.rect.x, obstruction.rect.y - airship.rect.y)) > 0 or airship_mask.overlap_area(obstruction_mask2, (obstruction2.rect.x - airship.rect.x, obstruction2.rect.y - airship.rect.y)) > 0:
-    #     print('пересечение')
-    offset = (int(airship.rect.x - holst_rect.x), int(airship.rect.y - holst_rect.y))
-    if mask1.overlap_area(airship_mask, offset):
-        print('пересечение')
-    offset = (int(airship.rect.x - game_holst_rect.x), int(airship.rect.y - game_holst_rect.y))
-    if game_mask.overlap_area(airship_mask, offset):
-        print('пересечение')
-    pygame.display.update()
+pygame.quit()
+sys.exit()
