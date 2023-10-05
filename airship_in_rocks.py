@@ -5,7 +5,9 @@ pygame.init()
 
 sc = pygame.display.set_mode((800, 500), pygame.RESIZABLE)
 
-ComplexitY = 80
+pygame.display.set_caption('airship in rocks')
+
+ComplexitY = 30
 
 pause = True
 
@@ -108,6 +110,12 @@ rotate = 1
 MOVE_OBSTRUCTIONS = 30
 point = 0
 
+obs1 = ObstrucTion(0, 0, 'obs.png')
+obs2 = ObstrucTion(2400, 0, 'obs.png')
+
+obs11 = ObstrucTion(0, 0, 'obs2.png')
+obs22 = ObstrucTion(2400, 0, 'obs2.png')
+
 holst = pygame.Surface((800, 500), pygame.SRCALPHA, 32) # Прозрачность фона
 game_holst = pygame.Surface((800, 500), pygame.SRCALPHA, 32) # Прозрачность фона
 holst = holst.convert_alpha() # Прозрачность фона
@@ -148,7 +156,7 @@ def reset_holst(hol):
         random_holst(holst, 100, 'up')
 
 f1 = pygame.font.Font(None, 36)
-text1 = f1.render('e = exit   p = play   esc = menu', True,
+text1 = f1.render('q = quit   p = play   esc = menu', True,
                   (255, 255, 0))
 text2 = f1.render('AIRSHIP IN ROCKS', True,
                   (255, 255, 255))
@@ -163,15 +171,43 @@ while 1:
                 pause = False
             elif event.key == pygame.K_ESCAPE:
                 pause = True
-            elif event.key == pygame.K_e:
+            elif event.key == pygame.K_q:
                 whilee = True
-    sc.fill((30, 30, 30))
+    sc.fill((50, 50, 50))
     if pause == True:
         sc.blit(text1, (230, 250))
-        sc.blit(text2, (300, 100))
+        sc.blit(text2, (290, 100))
         pygame.display.update()
     if whilee == True: break
     if pause == False:
+
+
+        obs11.rect.x -= 2
+        obs22.rect.x -= 2
+        obs11.rect.y = 0
+        obs22.rect.y = 0
+
+        if obs11.rect.x <= -2400:
+            obs11.rect.x = 2400
+        if obs22.rect.x <= -2400:
+            obs22.rect.x = 2400
+
+        sc.blit(obs11.image, obs11.rect)
+        sc.blit(obs22.image, obs22.rect)
+
+        obs1.rect.x -= 4
+        obs2.rect.x -= 4
+        obs1.rect.y = 0
+        obs2.rect.y = 0
+
+        if obs1.rect.x <= -2400:
+            obs1.rect.x = 2400
+        if obs2.rect.x <= -2400:
+            obs2.rect.x = 2400
+
+        sc.blit(obs1.image, obs1.rect)
+        sc.blit(obs2.image, obs2.rect)
+
         point += 1
         speed_fall()
         touch()
@@ -194,7 +230,7 @@ while 1:
         sc.blit(game_holst, (game_holst_rect.x, game_holst_rect.y))
 
         sc.blit(airship.image, airship.rect)
-        pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
+        # pygame.draw.rect(sc, (255, 255, 255), pygame.Rect(airship), 1)
         clock.tick(FPS)
 
         if point > 150:
